@@ -6,70 +6,120 @@
     <title>Browsers Genealogy Map</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; 
-            display: flex; 
-            height: 100vh; 
-            background: #0f172a; 
-            color: #f8fafc; 
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            background: #0f172a;
+            color: #f8fafc;
             overflow: hidden;
         }
-        #cy { 
-            flex-grow: 1; 
-            height: 100%; 
+        #cy {
+            flex-grow: 1;
+            height: 100%;
+            min-width: 0;
         }
-        #sidebar { 
-            width: 380px; 
-            background: #1e293b; 
-            padding: 30px; 
-            box-shadow: -5px 0 20px rgba(0,0,0,0.4); 
-            overflow-y: auto; 
+        #sidebar {
+            width: 460px;
+            min-width: 460px;
+            background: #1e293b;
+            padding: 32px 28px;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.4);
+            overflow-y: auto;
             display: none;
+            flex-direction: column;
             border-left: 1px solid #334155;
-            transition: all 0.3s ease;
         }
-        
         #sidebar-header {
             display: flex;
             align-items: center;
             margin-bottom: 20px;
-            padding-bottom: 15px;
+            padding-bottom: 18px;
             border-bottom: 1px solid #334155;
+            gap: 16px;
         }
-        #sidebar-icon {
-            width: 40px;
-            height: 40px;
-            margin-right: 15px;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
+        #sidebar-logo-wrap {
+            width: 52px;
+            height: 52px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        #title { 
-            color: #38bdf8; 
-            margin: 0; 
-            font-size: 1.5em;
+        #sidebar-logo-wrap img {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
         }
-
+        #sidebar-title-block { flex: 1; min-width: 0; }
+        #title {
+            color: #38bdf8;
+            margin: 0 0 4px;
+            font-size: 1.4em;
+            line-height: 1.2;
+        }
+        #engine-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.72em;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        #close-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1.4em;
+            cursor: pointer;
+            line-height: 1;
+            padding: 4px 6px;
+            border-radius: 6px;
+            transition: color 0.2s, background 0.2s;
+            flex-shrink: 0;
+        }
+        #close-btn:hover { color: #f8fafc; background: #334155; }
+        #content {
+            font-size: 0.95em;
+            line-height: 1.75;
+            color: #cbd5e1;
+        }
+        #content p { margin: 0 0 14px; }
+        #content hr { border: 0; border-top: 1px solid #334155; margin: 18px 0; }
         #sidebar a { color: #38bdf8; text-decoration: none; font-weight: bold; }
         #sidebar a:hover { text-decoration: underline; }
-        
-        .btn-add { 
-            position: absolute; 
-            bottom: 20px; 
-            left: 20px; 
-            padding: 12px 24px; 
-            background: #38bdf8; 
-            color: #0f172a; 
-            border: none; 
-            cursor: pointer; 
-            border-radius: 8px; 
+        #no-wiki-notice {
+            background: #1e3a5f;
+            border: 1px solid #2563eb44;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.85em;
+            color: #93c5fd;
+            margin-bottom: 14px;
+            display: none;
+        }
+        .btn-add {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: #38bdf8;
+            color: #0f172a;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
             font-weight: bold;
             transition: background 0.3s;
             z-index: 10;
         }
         .btn-add:hover { background: #7dd3fc; }
-        
         #placeholder {
             position: absolute;
             top: 50%;
@@ -77,20 +127,64 @@
             transform: translate(-50%, -50%);
             color: #475569;
             pointer-events: none;
-            font-size: 1.2em;
+            font-size: 1.1em;
+            text-align: center;
+            line-height: 2;
+        }
+        #legend {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: #1e293bdd;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 0.76em;
+            color: #94a3b8;
+            z-index: 10;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+        }
+        #legend div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+        #legend div:last-child { margin-bottom: 0; }
+        .legend-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            flex-shrink: 0;
         }
     </style>
 </head>
 <body>
 
-    <div id="placeholder">Click on a browser to see details</div>
+    <div id="placeholder">Click on a browser node to see details<br><span style="font-size:0.85em;color:#334155">Scroll to zoom · Drag to pan</span></div>
     <div id="cy"></div>
-    
+
+    <div id="legend">
+        <div><span class="legend-dot" style="background:#38bdf8"></span> Chromium-based</div>
+        <div><span class="legend-dot" style="background:#a78bfa"></span> Gecko / Firefox</div>
+        <div><span class="legend-dot" style="background:#34d399"></span> WebKit</div>
+        <div><span class="legend-dot" style="background:#f59e0b"></span> Independent engine</div>
+        <div><span class="legend-dot" style="background:#94a3b8"></span> Engine / Legacy</div>
+    </div>
+
     <div id="sidebar">
         <div id="sidebar-header">
-            <div id="sidebar-icon"></div>
-            <h2 id="title">Browser Name</h2>
+            <div id="sidebar-logo-wrap">
+                <img id="sidebar-logo" src="" alt="" onerror="this.style.display='none'">
+            </div>
+            <div id="sidebar-title-block">
+                <h2 id="title">Browser</h2>
+                <span id="engine-badge"></span>
+            </div>
+            <button id="close-btn" onclick="closeSidebar()">✕</button>
         </div>
+        <div id="no-wiki-notice"></div>
         <div id="content">Loading information...</div>
     </div>
 
@@ -99,9 +193,57 @@
     </button>
 
     <script>
-        // Функция для генерации ссылки на иконку
-        function getIconUrl(siteUrl) {
-            return `https://www.google.com/s2/favicons?sz=128&domain_url=${siteUrl}`;
+        // --- Config ---
+        const nodeColors = {
+            chromium: '#38bdf8', chrome: '#38bdf8', brave: '#38bdf8',
+            edge: '#38bdf8', opera: '#38bdf8', vivaldi: '#38bdf8',
+            ungoogled: '#38bdf8', bromite: '#38bdf8', cromite: '#38bdf8',
+            gecko: '#a78bfa', firefox: '#a78bfa', tor: '#a78bfa',
+            librewolf: '#a78bfa', mullvad: '#a78bfa', palemoon: '#a78bfa',
+            netscape: '#a78bfa',
+            webkit: '#34d399', safari: '#34d399',
+            ladybird: '#f59e0b', netsurf: '#f59e0b', flow: '#f59e0b', dillo: '#f59e0b',
+            mosaic: '#94a3b8', ie: '#94a3b8',
+        };
+
+        const engineLabels = {
+            chromium: 'Blink', chrome: 'Blink', brave: 'Blink',
+            edge: 'Blink', opera: 'Blink', vivaldi: 'Blink',
+            ungoogled: 'Blink', bromite: 'Blink', cromite: 'Blink',
+            gecko: 'Gecko engine', firefox: 'Gecko', tor: 'Gecko',
+            librewolf: 'Gecko', mullvad: 'Gecko', palemoon: 'Goanna',
+            netscape: 'Gecko/Trident',
+            webkit: 'WebKit engine', safari: 'WebKit',
+            ladybird: 'LibWeb', netsurf: 'NetSurf', flow: 'Flow', dillo: 'Dillo',
+            mosaic: 'NCSA Mosaic', ie: 'Trident',
+        };
+
+        const engineColors = {
+            'Blink': { bg: '#1e3a5f', text: '#38bdf8' },
+            'Blink engine': { bg: '#1e3a5f', text: '#38bdf8' },
+            'Gecko': { bg: '#2e1b5e', text: '#a78bfa' },
+            'Goanna': { bg: '#2e1b5e', text: '#c4b5fd' },
+            'Gecko engine': { bg: '#2e1b5e', text: '#a78bfa' },
+            'Gecko/Trident': { bg: '#2e1b5e', text: '#a78bfa' },
+            'WebKit': { bg: '#0f2e23', text: '#34d399' },
+            'WebKit engine': { bg: '#0f2e23', text: '#34d399' },
+            'LibWeb': { bg: '#2a1f07', text: '#f59e0b' },
+            'NetSurf': { bg: '#2a1f07', text: '#f59e0b' },
+            'Flow': { bg: '#2a1f07', text: '#f59e0b' },
+            'Dillo': { bg: '#2a1f07', text: '#f59e0b' },
+            'NCSA Mosaic': { bg: '#1e293b', text: '#94a3b8' },
+            'Trident': { bg: '#1e293b', text: '#94a3b8' },
+        };
+
+        // Favicon with CDN fallback
+        function getLogoUrl(nodeData) {
+            const googleFavicon = `https://www.google.com/s2/favicons?sz=128&domain_url=${nodeData.url}`;
+            return googleFavicon;
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').style.display = 'none';
+            document.getElementById('placeholder').style.display = 'block';
         }
 
         async function init() {
@@ -122,74 +264,125 @@
                                 'text-margin-y': 8,
                                 'font-size': '11px',
                                 'text-wrap': 'wrap',
-                                'text-max-width': '80px',
-                                
-                                // НАСТРОЙКИ ИКОНОК
-                                'width': 50, // Чуть меньше, чтобы фавиконки не мылились
-                                'height': 50,
-                                // Используем функцию для динамического получения иконки
-                                'background-image': function(node) { return getIconUrl(node.data('url')); },
+                                'text-max-width': '95px',
+                                'width': 52,
+                                'height': 52,
+                                'background-image': function(node) { return getLogoUrl(node.data()); },
                                 'background-fit': 'contain',
                                 'background-clip': 'node',
                                 'background-opacity': 0,
-                                'border-width': 0
+                                'border-width': 2.5,
+                                'border-color': function(node) { return nodeColors[node.data('id')] || '#94a3b8'; },
+                                'border-opacity': 0.65,
+                                'shape': 'ellipse',
                             }
                         },
                         {
                             selector: 'edge',
                             style: {
-                                'width': 2,
-                                'line-color': '#475569',
-                                'target-arrow-color': '#475569',
+                                'width': 1.5,
+                                'line-color': '#334155',
+                                'target-arrow-color': '#334155',
                                 'target-arrow-shape': 'triangle',
                                 'curve-style': 'bezier',
-                                'opacity': 0.6
+                                'opacity': 0.7
                             }
                         },
                         {
                             selector: 'node:selected',
                             style: {
-                                'background-color': '#fbbf24',
-                                'background-opacity': 0.2,
-                                'border-width': 2,
-                                'border-color': '#fbbf24'
+                                'border-width': 3.5,
+                                'border-opacity': 1,
+                                'border-color': function(node) { return nodeColors[node.data('id')] || '#38bdf8'; },
+                                'background-opacity': 0.15,
+                                'background-color': function(node) { return nodeColors[node.data('id')] || '#38bdf8'; },
                             }
+                        },
+                        {
+                            selector: 'node:active',
+                            style: { 'overlay-opacity': 0 }
                         }
                     ],
-                    layout: { 
-                        name: 'breadthfirst', 
-                        directed: true, 
-                        padding: 50,
-                        spacingFactor: 1.3
+                    layout: {
+                        name: 'breadthfirst',
+                        directed: true,
+                        padding: 60,
+                        spacingFactor: 1.4,
+                        avoidOverlap: true,
                     }
                 });
 
-                cy.on('tap', 'node', async function(evt){
+                cy.on('tap', 'node', async function(evt) {
                     const node = evt.target;
-                    const wikiPage = node.data('wiki');
-                    // Генерируем иконку для сайдбара
-                    const iconPath = getIconUrl(node.data('url'));
-                    
+                    const nd = node.data();
+                    const color = nodeColors[nd.id] || '#94a3b8';
+                    const engine = engineLabels[nd.id] || '';
+                    const engineStyle = engineColors[engine] || { bg: '#1e293b', text: '#94a3b8' };
+
                     document.getElementById('placeholder').style.display = 'none';
-                    document.getElementById('sidebar').style.display = 'block';
-                    document.getElementById('title').innerText = node.data('label');
-                    
-                    document.getElementById('sidebar-icon').style.backgroundImage = `url(${iconPath})`;
-                    document.getElementById('content').innerHTML = 'Loading from Wikipedia...';
-                    
-                    const wikiUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${wikiPage}`;
+                    const sidebar = document.getElementById('sidebar');
+                    sidebar.style.display = 'flex';
+
+                    // Logo
+                    const logoEl = document.getElementById('sidebar-logo');
+                    logoEl.style.display = 'block';
+                    logoEl.src = getLogoUrl(nd);
+                    logoEl.alt = nd.label;
+
+                    // Title & badge
+                    document.getElementById('title').innerText = nd.label;
+                    document.getElementById('title').style.color = color;
+                    const badge = document.getElementById('engine-badge');
+                    if (engine) {
+                        badge.innerText = engine;
+                        badge.style.background = engineStyle.bg;
+                        badge.style.color = engineStyle.text;
+                        badge.style.display = 'inline-block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+
+                    // No-wiki notice
+                    const notice = document.getElementById('no-wiki-notice');
+                    if (nd.noWiki) {
+                        notice.style.display = 'block';
+                        notice.innerHTML = `ℹ️ ${nd.wikiNote || 'No Wikipedia article available.'}`;
+                    } else {
+                        notice.style.display = 'none';
+                    }
+
+                    document.getElementById('content').innerHTML = '<span style="color:#64748b">Loading from Wikipedia...</span>';
+
+                    if (nd.noWiki) {
+                        // No wiki — link to homepage instead
+                        document.getElementById('content').innerHTML = `
+                            <p>No Wikipedia article exists for this browser.</p>
+                            <hr>
+                            <a href="${nd.wikiUrl || nd.url}" target="_blank">Visit official page →</a>
+                        `;
+                        return;
+                    }
+
+                    const wikiUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${nd.wiki}`;
                     try {
                         const res = await fetch(wikiUrl);
                         const info = await res.json();
+                        const extract = info.extract || 'No description available.';
+                        const wikiLink = info.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${nd.wiki}`;
                         document.getElementById('content').innerHTML = `
-                            <p>${info.extract || 'No description available.'}</p>
-                            <hr style="border: 0; border-top: 1px solid #334155; margin: 20px 0;">
-                            <a href="${info.content_urls.desktop.page}" target="_blank">Read more on Wikipedia →</a>
+                            <p>${extract}</p>
+                            <hr>
+                            <a href="${wikiLink}" target="_blank">Read more on Wikipedia →</a>
                         `;
                     } catch (e) {
                         document.getElementById('content').innerText = 'Failed to load Wikipedia data.';
                     }
                 });
+
+                cy.on('tap', function(evt) {
+                    if (evt.target === cy) closeSidebar();
+                });
+
             } catch (error) {
                 console.error('Error loading data.json:', error);
                 document.getElementById('placeholder').innerText = 'Error loading map data.';
