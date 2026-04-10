@@ -499,6 +499,11 @@
             height: 100dvh;
             border-left: none;
             box-shadow: none;
+            z-index: 40;
+        }
+        body.mobile-layout.sidebar-visible #legend {
+            opacity: 0;
+            pointer-events: none;
         }
         body.mobile-layout #sidebar-logo-wrap {
             width: 46px;
@@ -716,6 +721,7 @@
         }
 
         let cyRef = null;
+        let pinnedNodeId = null;
 
         function toggleMobileLegend() {
             document.getElementById('legend').classList.toggle('collapsed');
@@ -865,6 +871,12 @@
                 sidebar.style.display = 'none';
                 sidebar.classList.remove('sidebar-closing');
             }, 220);
+            pinnedNodeId = null;
+            if (cyRef) {
+                cyRef.batch(() => {
+                    cyRef.nodes().removeClass('node-hover node-upper');
+                });
+            }
             const hintDismissed = localStorage.getItem('mapHintDismissed') === '1';
             const isMobile = getViewportProfile() === 'mobile';
             document.getElementById('placeholder').style.display = (!isMobile && !hintDismissed) ? 'block' : 'none';
@@ -910,6 +922,33 @@
                                 'border-color': function(node) { return nodeColors[node.data('id')] || '#94a3b8'; },
                                 'border-opacity': 0.65,
                                 'shape': 'ellipse',
+                                'z-index': 2,
+                                'transition-property': 'border-width, border-opacity, shadow-blur, shadow-opacity, background-opacity, z-index',
+                                'transition-duration': '120ms',
+                            }
+                        },
+                        {
+                            selector: 'node.node-hover',
+                            style: {
+                                'border-width': 4,
+                                'border-opacity': 1,
+                                'shadow-blur': 18,
+                                'shadow-opacity': 0.38,
+                                'shadow-color': function(node) { return nodeColors[node.data('id')] || '#38bdf8'; },
+                                'z-index': 80,
+                            }
+                        },
+                        {
+                            selector: 'node.node-upper',
+                            style: {
+                                'border-width': 4.2,
+                                'border-opacity': 1,
+                                'shadow-blur': 20,
+                                'shadow-opacity': 0.45,
+                                'shadow-color': function(node) { return nodeColors[node.data('id')] || '#38bdf8'; },
+                                'background-opacity': 0.12,
+                                'background-color': function(node) { return nodeColors[node.data('id')] || '#38bdf8'; },
+                                'z-index': 90,
                             }
                         },
                         {
@@ -1038,6 +1077,20 @@
                     minZoom: 0.1,
                     maxZoom: 3
                 });
+                cyRef = cy;
+
+                function updateNodeElevation(hoveredNode = null) {
+                    cy.batch(() => {
+                        cy.nodes().removeClass('node-hover node-upper');
+                        if (hoveredNode && (!pinnedNodeId || hoveredNode.id() !== pinnedNodeId)) {
+                            hoveredNode.addClass('node-hover');
+                        }
+                        if (pinnedNodeId) {
+                            const pinned = cy.getElementById(pinnedNodeId);
+                            if (pinned.length) pinned.addClass('node-upper');
+                        }
+                    });
+                }
 
                 function applyResponsiveGraphStyles(profileName) {
                     const isMobile = profileName === 'mobile';
@@ -1146,6 +1199,15 @@
                 applyResponsiveGraphStyles(profile);
                 setupCustomCursor();
 
+                cy.on('mouseover', 'node', function(evt) {
+                    if (getViewportProfile() === 'mobile') return;
+                    updateNodeElevation(evt.target);
+                });
+                cy.on('mouseout', 'node', function() {
+                    if (getViewportProfile() === 'mobile') return;
+                    updateNodeElevation(null);
+                });
+
                 cy.on('tap', 'node', async function(evt) {
                     const node = evt.target;
                     const nd = node.data();
@@ -1158,6 +1220,8 @@
                     const sidebar = document.getElementById('sidebar');
                     const alreadyOpen = sidebar.style.display === 'flex';
                     sidebar.style.display = 'flex';
+                    pinnedNodeId = nd.id;
+                    updateNodeElevation(null);
                     if (!alreadyOpen) {
                         sidebar.classList.remove('sidebar-open');
                         sidebar.classList.remove('sidebar-closing');
