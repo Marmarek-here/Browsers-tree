@@ -166,9 +166,9 @@
     <div id="cy"></div>
 
     <div id="legend">
-        <div><span class="legend-dot" style="background:#38bdf8"></span> Chromium-based</div>
-        <div><span class="legend-dot" style="background:#a78bfa"></span> Gecko / Firefox</div>
-        <div><span class="legend-dot" style="background:#34d399"></span> WebKit</div>
+        <div><span class="legend-dot" style="background:#38bdf8"></span> Blink-based</div>
+        <div><span class="legend-dot" style="background:#a78bfa"></span> Gecko-based</div>
+        <div><span class="legend-dot" style="background:#34d399"></span> WebKit-based</div>
         <div><span class="legend-dot" style="background:#f59e0b"></span> Independent engine</div>
         <div><span class="legend-dot" style="background:#94a3b8"></span> Engine / Legacy</div>
     </div>
@@ -197,25 +197,25 @@
         const nodeColors = {
             chromium: '#38bdf8', chrome: '#38bdf8', brave: '#38bdf8',
             edge: '#38bdf8', opera: '#38bdf8', vivaldi: '#38bdf8',
-            ungoogled: '#38bdf8', bromite: '#38bdf8', cromite: '#38bdf8', arc: '#38bdf8',
+            ungoogled: '#38bdf8', bromite: '#38bdf8', cromite: '#38bdf8', arc: '#38bdf8', kiwi: '#38bdf8', min: '#38bdf8', samsung: '#38bdf8', blink: '#38bdf8',
             gecko: '#a78bfa', firefox: '#a78bfa', tor: '#a78bfa',
-            librewolf: '#a78bfa', mullvad: '#a78bfa', palemoon: '#a78bfa', zen: '#a78bfa',
+            librewolf: '#a78bfa', mullvad: '#a78bfa', palemoon: '#a78bfa', zen: '#a78bfa', icecat: '#a78bfa', waterfox: '#a78bfa',
             netscape: '#a78bfa',
             webkit: '#34d399', safari: '#34d399', konqueror: '#34d399', khtml: '#34d399',
             ladybird: '#f59e0b', netsurf: '#f59e0b', flow: '#f59e0b', dillo: '#f59e0b',
-            mosaic: '#94a3b8', ie: '#94a3b8',
+            mosaic: '#94a3b8', ie: '#94a3b8', trident: '#94a3b8', edgehtml: '#94a3b8', 'edge-legacy': '#94a3b8',
         };
 
         const engineLabels = {
             chromium: 'Blink', chrome: 'Blink', brave: 'Blink',
             edge: 'Blink', opera: 'Blink', vivaldi: 'Blink',
-            ungoogled: 'Blink', bromite: 'Blink', cromite: 'Blink', arc: 'Blink',
+            ungoogled: 'Blink', bromite: 'Blink', cromite: 'Blink', arc: 'Blink', kiwi: 'Blink', min: 'Blink', samsung: 'Blink', blink: 'Blink engine',
             gecko: 'Gecko engine', firefox: 'Gecko', tor: 'Gecko',
-            librewolf: 'Gecko', mullvad: 'Gecko', palemoon: 'Goanna', zen: 'Gecko',
+            librewolf: 'Gecko', mullvad: 'Gecko', palemoon: 'Goanna', zen: 'Gecko', icecat: 'Gecko', waterfox: 'Gecko',
             netscape: 'Gecko/Trident',
             webkit: 'WebKit engine', safari: 'WebKit', konqueror: 'KHTML', khtml: 'KHTML engine',
             ladybird: 'LibWeb', netsurf: 'NetSurf', flow: 'Flow', dillo: 'Dillo',
-            mosaic: 'NCSA Mosaic', ie: 'Trident',
+            mosaic: 'NCSA Mosaic', ie: 'Trident', trident: 'Trident engine', edgehtml: 'EdgeHTML engine', 'edge-legacy': 'EdgeHTML',
         };
 
         const engineColors = {
@@ -237,7 +237,11 @@
 
         // Favicon with CDN fallback
         function getLogoUrl(nodeData) {
-            const googleFavicon = `https://www.google.com/s2/favicons?sz=128&domain_url=${nodeData.url}`;
+            const customLogo = nodeData.logo;
+            if (customLogo && customLogo !== "") {
+                return customLogo;
+            }
+            const googleFavicon = `https://www.google.com/s2/favicons?sz=256&domain_url=${nodeData.url}`;
             return googleFavicon;
         }
 
@@ -346,21 +350,18 @@
                         badge.style.display = 'none';
                     }
 
-                    // No-wiki notice
-                    const notice = document.getElementById('no-wiki-notice');
-                    if (nd.noWiki) {
-                        notice.style.display = 'block';
-                        notice.innerHTML = `ℹ️ ${nd.wikiNote || 'No Wikipedia article available.'}`;
-                    } else {
-                        notice.style.display = 'none';
-                    }
-
                     document.getElementById('content').innerHTML = '<span style="color:#64748b">Loading from Wikipedia...</span>';
 
                     if (nd.noWiki) {
-                        // No wiki — link to homepage instead
+                        // No wiki — show custom description and link to homepage
+                        const extract = nd.wikiNote || 'No description available.';
+                        let authorHtml = '';
+                        if (nd.author) {
+                            authorHtml = `<hr><p><strong>Author:</strong> ${nd.author}</p>`;
+                        }
                         document.getElementById('content').innerHTML = `
-                            <p>No Wikipedia article exists for this browser.</p>
+                            <p>${extract}</p>
+                            ${authorHtml}
                             <hr>
                             <a href="${nd.wikiUrl || nd.url}" target="_blank">Visit official page →</a>
                         `;
@@ -373,8 +374,13 @@
                         const info = await res.json();
                         const extract = info.extract || 'No description available.';
                         const wikiLink = info.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${nd.wiki}`;
+                        let authorHtml = '';
+                        if (nd.author) {
+                            authorHtml = `<hr><p><strong>Author:</strong> ${nd.author}</p>`;
+                        }
                         document.getElementById('content').innerHTML = `
                             <p>${extract}</p>
+                            ${authorHtml}
                             <hr>
                             <a href="${wikiLink}" target="_blank">Read more on Wikipedia →</a>
                         `;

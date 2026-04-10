@@ -23,9 +23,11 @@ An interactive visualization of web browser genealogy and engine relationships.
 
 ## Browser Lineages
 
-- **Chromium/Blink**: The most widely used engine, powering Chrome, Edge, Brave, Opera, Vivaldi, and many others
-- **Gecko**: Firefox's engine, also used by Tor Browser, LibreWolf, and others
-- **WebKit**: Originally from KHTML (Konqueror), powers Safari and was the basis for Blink
+- **Chromium/Blink**: The most widely used engine, forked from WebKit. Powers Chrome, Edge, Brave, Opera, Vivaldi, Arc, Kiwi, Min, Samsung Internet, Android WebView, and many others
+- **Gecko**: Firefox's engine, also used by Tor Browser, LibreWolf, Mullvad, Pale Moon, Zen, GNU IceCat, Waterfox
+- **WebKit**: Originally from KHTML (Konqueror), powers Safari, iOS WKWebView, macOS WebView
+- **Trident/EdgeHTML**: Microsoft's engines for Internet Explorer, legacy Edge, and Windows WebBrowser control
+- **Presto**: Opera's former engine, used in older versions of Opera
 - **Independent**: Engines like NetSurf, Dillo, Ladybird, etc.
 
 ## Technologies Used
