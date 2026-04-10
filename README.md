@@ -31,14 +31,14 @@ An interactive visualization of web browser genealogy and engine relationships.
 - **Independent**: Engines like NetSurf, Dillo, Ladybird, etc.
 
 ## Technologies Used
-
+gpt.com/c/69d8f2a5-d92c-8333-bd5b-ab5b
 - [Cytoscape.js](https://js.cytoscape.org/) for graph visualization
 - Wikipedia API for browser descriptions
 - Google Favicon API for logos
 
 ## Contributing
 
-Found a missing browser or incorrect lineage? [Open an issue](https://github.com/yourusername/yourrepo/issues) or submit a pull request!
+Found a missing browser or incorrect lineage? [Open an issue](https://github.com/Marmarek-here/Browsers-tree/issues) or submit a pull request!
 
 ## License
 
