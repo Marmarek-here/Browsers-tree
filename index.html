@@ -1220,6 +1220,11 @@
                     }
                 });
 
+                const sidebarEl = document.getElementById('sidebar');
+                sidebarEl.addEventListener('click', (evt) => {
+                    if (evt.target === sidebarEl) closeSidebar();
+                });
+
                 const activeTheme = document.body.classList.contains('theme-light') ? 'light' : (document.body.classList.contains('theme-dark-oled') ? 'dark-oled' : 'dark-standard');
                 applyThemeToGraph(activeTheme);
 
