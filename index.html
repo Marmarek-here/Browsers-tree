@@ -589,7 +589,7 @@
             edge: '#38bdf8', opera: '#38bdf8', vivaldi: '#38bdf8', thorium: '#38bdf8',
             ungoogled: '#38bdf8', bromite: '#38bdf8', cromite: '#38bdf8', arc: '#38bdf8', kiwi: '#38bdf8', min: '#38bdf8', samsung: '#38bdf8', blink: '#38bdf8',
             gecko: '#a78bfa', firefox: '#a78bfa', tor: '#a78bfa',
-            librewolf: '#a78bfa', mullvad: '#a78bfa', palemoon: '#a78bfa', zen: '#a78bfa', icecat: '#a78bfa', waterfox: '#a78bfa',
+            librewolf: '#a78bfa', mullvad: '#a78bfa', palemoon: '#a78bfa', basilisk: '#a78bfa', zen: '#a78bfa', floorp: '#a78bfa', iceweasel: '#a78bfa', icecat: '#a78bfa', waterfox: '#a78bfa',
             presto: '#ef4444', 'opera-presto': '#ef4444',
             netscape: '#d97706', mosaic: '#d97706',
             webkit: '#34d399', safari: '#34d399', konqueror: '#34d399', khtml: '#34d399',
@@ -602,7 +602,7 @@
             edge: 'Blink', opera: 'Blink', vivaldi: 'Blink', thorium: 'Blink',
             ungoogled: 'Blink', bromite: 'Blink', cromite: 'Blink', arc: 'Blink', kiwi: 'Blink', min: 'Blink', samsung: 'Blink', blink: 'Blink engine',
             gecko: 'Gecko engine', firefox: 'Gecko', tor: 'Gecko',
-            librewolf: 'Gecko', mullvad: 'Gecko', palemoon: 'Goanna', zen: 'Gecko', icecat: 'Gecko', waterfox: 'Gecko',
+            librewolf: 'Gecko', mullvad: 'Gecko', palemoon: 'Goanna', basilisk: 'Goanna', zen: 'Gecko', floorp: 'Gecko', iceweasel: 'Gecko', icecat: 'Gecko', waterfox: 'Gecko',
             netscape: 'Mosaic lineage',
             webkit: 'WebKit engine', safari: 'WebKit', konqueror: 'KHTML', khtml: 'KHTML engine',
             presto: 'Presto engine', 'opera-presto': 'Presto', ladybird: 'LibWeb', netsurf: 'NetSurf', flow: 'Flow', dillo: 'Dillo',
@@ -675,7 +675,7 @@
 
         function getLegendGroup(nodeId) {
             if (['chromium', 'chrome', 'brave', 'edge', 'opera', 'vivaldi', 'thorium', 'arc', 'kiwi', 'min', 'samsung', 'ungoogled', 'bromite', 'cromite', 'android-webview', 'blink', 'windows-webview2'].includes(nodeId)) return 'blink';
-            if (['firefox', 'tor', 'librewolf', 'mullvad', 'palemoon', 'zen', 'icecat', 'waterfox', 'gecko'].includes(nodeId)) return 'gecko';
+            if (['firefox', 'tor', 'librewolf', 'mullvad', 'palemoon', 'basilisk', 'zen', 'floorp', 'iceweasel', 'icecat', 'waterfox', 'gecko'].includes(nodeId)) return 'gecko';
             if (['webkit', 'safari', 'konqueror', 'khtml', 'ios-wkwebview', 'macos-webview'].includes(nodeId)) return 'webkit';
             if (['presto', 'opera-presto'].includes(nodeId)) return 'presto';
             if (['mosaic', 'netscape'].includes(nodeId)) return 'mosaic';
@@ -772,8 +772,11 @@
                 tor: { currentVersion: 'Stable channel (rolling)', eol: 'Active' },
                 librewolf: { currentVersion: 'Stable channel (rolling)', eol: 'Active' },
                 mullvad: { currentVersion: 'Stable channel (rolling)', eol: 'Active' },
+                floorp: { currentVersion: 'Stable channel (rolling)', eol: 'Active' },
                 waterfox: { currentVersion: 'Stable channel (rolling)', eol: 'Active' },
                 zen: { currentVersion: 'Stable channel (rolling)', eol: 'Active' },
+                iceweasel: { currentVersion: 'Discontinued', eol: 'EoL' },
+                basilisk: { currentVersion: 'Unknown', eol: 'Unknown' },
                 samsung: { currentVersion: 'Stable channel (rolling)', eol: 'Active' },
                 thorium: { currentVersion: 'Stable channel (rolling)', eol: 'Active' },
                 'android-webview': { currentVersion: 'Tracks Chromium stable', eol: 'Active' },

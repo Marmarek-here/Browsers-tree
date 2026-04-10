@@ -187,6 +187,45 @@
     },
     {
       "data": {
+        "id": "basilisk",
+        "label": "Basilisk",
+        "wiki": "Basilisk_(web_browser)",
+        "url": "https://www.basilisk-browser.org",
+        "logo": "https://www.google.com/s2/favicons?sz=256&domain_url=https://www.basilisk-browser.org",
+        "author": "Moonchild Productions",
+        "currentVersion": "Unknown",
+        "eol": "Unknown",
+        "versionSource": "Project docs / manual tracking"
+      }
+    },
+    {
+      "data": {
+        "id": "iceweasel",
+        "label": "IceWeasel",
+        "wiki": "Mozilla_software_rebranded_by_Debian",
+        "url": "https://wiki.debian.org/Iceweasel",
+        "logo": "https://www.google.com/s2/favicons?sz=256&domain_url=https://wiki.debian.org/Iceweasel",
+        "author": "Debian Project",
+        "currentVersion": "Discontinued",
+        "eol": "EoL",
+        "versionSource": "Project docs / manual tracking"
+      }
+    },
+    {
+      "data": {
+        "id": "floorp",
+        "label": "Floorp",
+        "wiki": "Floorp",
+        "url": "https://floorp.app",
+        "logo": "https://www.google.com/s2/favicons?sz=256&domain_url=https://floorp.app",
+        "author": "Ablaze",
+        "currentVersion": "Stable channel (rolling)",
+        "eol": "Active",
+        "versionSource": "Project docs / manual tracking"
+      }
+    },
+    {
+      "data": {
         "id": "presto",
         "label": "Presto",
         "wiki": "Presto_(browser_engine)",
@@ -709,6 +748,12 @@
     {
       "data": {
         "source": "firefox",
+        "target": "iceweasel"
+      }
+    },
+    {
+      "data": {
+        "source": "iceweasel",
         "target": "icecat"
       }
     },
@@ -716,6 +761,18 @@
       "data": {
         "source": "firefox",
         "target": "waterfox"
+      }
+    },
+    {
+      "data": {
+        "source": "firefox",
+        "target": "floorp"
+      }
+    },
+    {
+      "data": {
+        "source": "palemoon",
+        "target": "basilisk"
       }
     },
     {
