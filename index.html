@@ -665,11 +665,14 @@
         function getLayoutOptions(profile) {
             if (profile === 'mobile') {
                 return {
-                    name: 'breadthfirst',
-                    directed: true,
-                    padding: 38,
-                    spacingFactor: 0.94,
-                    avoidOverlap: true,
+                    name: 'dagre',
+                    rankDir: 'LR',
+                    nodeSep: 26,
+                    rankSep: 82,
+                    edgeSep: 8,
+                    ranker: 'tight-tree',
+                    padding: 36,
+                    fit: true,
                 };
             }
 
