@@ -31,6 +31,69 @@
             display: none;
             flex-direction: column;
             border-left: 1px solid #334155;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        body.dark-mode {
+            background: #0f172a;
+            color: #f8fafc;
+        }
+        body.dark-mode #sidebar {
+            background: #1e293b;
+            border-left-color: #334155;
+        }
+        body.dark-mode #sidebar-header {
+            border-bottom-color: #334155;
+        }
+        body.dark-mode #content {
+            color: #cbd5e1;
+        }
+        body.light-mode {
+            background: #f8fafc;
+            color: #0f172a;
+        }
+        body.light-mode #sidebar {
+            background: #e2e8f0;
+            border-left-color: #cbd5e1;
+        }
+        body.light-mode #sidebar-header {
+            border-bottom-color: #cbd5e1;
+        }
+        body.light-mode #content {
+            color: #334155;
+        }
+        body.light-mode #cy {
+            background: #f8fafc;
+        }
+        body.light-mode node {
+            color: #0f172a;
+        }
+        #theme-toggle {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 8px 14px;
+            background: #334155;
+            color: #f8fafc;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            z-index: 11;
+            transition: background 0.3s;
+        }
+        #theme-toggle:hover {
+            background: #475569;
         }
         #sidebar-header {
             display: flex;
@@ -164,6 +227,7 @@
 
     <div id="placeholder">Click on a browser node to see details<br><span style="font-size:0.85em;color:#334155">Scroll to zoom · Drag to pan</span></div>
     <div id="cy"></div>
+    <button id="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
 
     <div id="legend">
         <div><span class="legend-dot" style="background:#38bdf8"></span> Blink-based</div>
@@ -271,7 +335,10 @@
                                 'text-max-width': '95px',
                                 'width': 52,
                                 'height': 52,
-                                'background-image': function(node) { return getLogoUrl(node.data()); },
+                                'background-image': function(node) {
+                                    if (node.data('id') === 'ungoogled') return '';
+                                    return getLogoUrl(node.data());
+                                },
                                 'background-fit': 'contain',
                                 'background-clip': 'node',
                                 'background-opacity': 0,
@@ -311,7 +378,7 @@
                         name: 'breadthfirst',
                         directed: true,
                         padding: 60,
-                        spacingFactor: 1.4,
+                        spacingFactor: 0.8,
                         avoidOverlap: true,
                     },
                     userZoomingEnabled: true,
@@ -400,6 +467,39 @@
         }
 
         init();
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('theme-toggle');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+                themeToggle.textContent = '☀️ Light';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+                themeToggle.textContent = '🌙 Dark';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Load theme preference
+        window.addEventListener('DOMContentLoaded', function() {
+            const theme = localStorage.getItem('theme') || 'dark';
+            const body = document.body;
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            if (theme === 'light') {
+                body.classList.add('light-mode');
+                themeToggle.textContent = '☀️ Light';
+            } else {
+                body.classList.add('dark-mode');
+                themeToggle.textContent = '🌙 Dark';
+            }
+        });
     </script>
 </body>
 </html>
