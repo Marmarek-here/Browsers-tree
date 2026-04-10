@@ -289,23 +289,26 @@
         .btn-add:hover { background: #7dd3fc; }
         #watermark {
             position: fixed;
-            bottom: 12px;
-            right: 16px;
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
             font-size: 0.7em;
             color: rgba(148, 163, 184, 0.4);
             pointer-events: none;
             z-index: 5;
             letter-spacing: 0.025em;
             user-select: none;
+            white-space: nowrap;
+            transition: opacity 0.22s;
+        }
+        body.sidebar-visible #watermark {
+            opacity: 0;
         }
         body.theme-light #watermark,
         body.light-mode #watermark {
             color: rgba(71, 85, 105, 0.45);
         }
         body.mobile-layout #watermark {
-            bottom: calc(env(safe-area-inset-bottom, 0px) + 54px);
-            right: 50%;
-            transform: translateX(50%);
             font-size: 0.68em;
         }
         #placeholder {
@@ -683,8 +686,18 @@
             }
         }
 
-        // Force all icons through Google's favicon APIs for consistency.
+        // High-quality icon overrides for nodes where the favicon API gives poor results
+        // (dead domains, wrong brand icons, or low-res favicons).
+        const LOGO_OVERRIDES = {
+            firefox:   'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Firefox_logo%2C_2019.svg/240px-Firefox_logo%2C_2019.svg.png',
+            chromium:  'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Chromium_Logo.svg/240px-Chromium_Logo.svg.png',
+            ungoogled: 'https://avatars.githubusercontent.com/u/34956588?s=200',
+            netscape:  'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Netscape_Communicator_logo.svg/240px-Netscape_Communicator_logo.svg.png',
+            netsurf:   'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/NetSurf-logo.png/200px-NetSurf-logo.png',
+        };
+
         function getLogoUrl(nodeData, size = 256) {
+            if (LOGO_OVERRIDES[nodeData.id]) return LOGO_OVERRIDES[nodeData.id];
             return getGoogleFaviconUrl(nodeData.url, size);
         }
 
