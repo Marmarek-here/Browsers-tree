@@ -494,6 +494,11 @@
             width: 100%;
             min-width: 0;
             padding: 24px 20px;
+            position: fixed;
+            inset: 0;
+            height: 100dvh;
+            border-left: none;
+            box-shadow: none;
         }
         body.mobile-layout #sidebar-logo-wrap {
             width: 46px;
@@ -510,20 +515,13 @@
             font-size: 0.9em;
         }
         body.mobile-layout .btn-add {
-            left: 12px;
-            right: 12px;
-            width: auto;
-            bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
-            z-index: 22;
+            display: none;
         }
         body.mobile-layout.sidebar-visible .btn-add {
             display: none;
         }
         body.mobile-layout #placeholder {
-            width: calc(100% - 24px);
-            top: 56%;
-            font-size: 1em;
-            line-height: 1.6;
+            display: none !important;
         }
         @media (max-width: 520px) and (max-height: 760px) {
             body.mobile-layout #legend {
@@ -868,16 +866,17 @@
                 sidebar.classList.remove('sidebar-closing');
             }, 220);
             const hintDismissed = localStorage.getItem('mapHintDismissed') === '1';
-            document.getElementById('placeholder').style.display = hintDismissed ? 'none' : 'block';
+            const isMobile = getViewportProfile() === 'mobile';
+            document.getElementById('placeholder').style.display = (!isMobile && !hintDismissed) ? 'block' : 'none';
         }
 
         async function init() {
             try {
                 const response = await fetch('data.json');
                 const data = await response.json();
-                const hintDismissed = localStorage.getItem('mapHintDismissed') === '1';
-                document.getElementById('placeholder').style.display = hintDismissed ? 'none' : 'block';
                 const profile = applyViewportProfile();
+                const hintDismissed = localStorage.getItem('mapHintDismissed') === '1';
+                document.getElementById('placeholder').style.display = (profile === 'mobile' || hintDismissed) ? 'none' : 'block';
 
                 // Auto-fill metadata for every node to keep fields complete.
                 data.nodes.forEach((entry) => {
@@ -1100,6 +1099,8 @@
 
                 function runResponsiveLayout() {
                     const nextProfile = applyViewportProfile();
+                    const hintDismissed = localStorage.getItem('mapHintDismissed') === '1';
+                    document.getElementById('placeholder').style.display = (nextProfile === 'mobile' || hintDismissed) ? 'none' : 'block';
                     applyResponsiveGraphStyles(nextProfile);
                     const layout = cy.layout(getLayoutOptions(nextProfile));
                     layout.run();
