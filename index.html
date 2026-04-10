@@ -37,6 +37,9 @@
         #sidebar.sidebar-open {
             animation: sidebarIn 0.28s ease-out forwards;
         }
+        #sidebar.sidebar-closing {
+            animation: sidebarOut 0.22s ease-in forwards;
+        }
         @keyframes sidebarIn {
             from {
                 transform: translateX(24px);
@@ -45,6 +48,16 @@
             to {
                 transform: translateX(0);
                 opacity: 1;
+            }
+        }
+        @keyframes sidebarOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(24px);
+                opacity: 0;
             }
         }
         body.dark-mode {
@@ -66,7 +79,7 @@
             color: #0f172a;
         }
         body.light-mode #sidebar {
-            background: #e2e8f0;
+            background: #f1f5f9;
             border-left-color: #cbd5e1;
         }
         body.light-mode #sidebar-header {
@@ -75,11 +88,45 @@
         body.light-mode #content {
             color: #334155;
         }
+        body.light-mode #title {
+            color: #0369a1;
+        }
+        body.light-mode #close-btn {
+            color: #475569;
+        }
+        body.light-mode #close-btn:hover {
+            color: #0f172a;
+            background: #cbd5e1;
+        }
+        body.light-mode #sidebar-logo-wrap {
+            background: #e2e8f0;
+        }
+        body.light-mode #content hr {
+            border-top-color: #cbd5e1;
+        }
+        body.light-mode #sidebar a {
+            color: #0369a1;
+        }
         body.light-mode #cy {
             background: #f8fafc;
         }
-        body.light-mode node {
-            color: #0f172a;
+        body.light-mode #legend {
+            background: rgba(241, 245, 249, 0.95);
+            border-color: #cbd5e1;
+            color: #334155;
+        }
+        body.light-mode #placeholder {
+            color: #64748b;
+        }
+        body.light-mode #placeholder span {
+            color: #94a3b8 !important;
+        }
+        body.light-mode .btn-add {
+            background: #0ea5e9;
+            color: #ffffff;
+        }
+        body.light-mode .btn-add:hover {
+            background: #0284c7;
         }
         #theme-toggle {
             position: absolute;
@@ -94,10 +141,27 @@
             font-size: 0.9em;
             font-weight: 500;
             z-index: 11;
-            transition: background 0.3s;
+            transition: background 0.3s, right 0.25s ease;
         }
         #theme-toggle:hover {
             background: #475569;
+        }
+        body.sidebar-visible #theme-toggle {
+            right: 484px;
+        }
+        body.light-mode #theme-toggle {
+            background: #e2e8f0;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+        }
+        body.light-mode #theme-toggle:hover {
+            background: #cbd5e1;
+        }
+        @media (max-width: 980px) {
+            body.sidebar-visible #theme-toggle {
+                right: 16px;
+                top: 64px;
+            }
         }
         #sidebar-header {
             display: flex;
@@ -374,8 +438,14 @@
 
         function closeSidebar() {
             const sidebar = document.getElementById('sidebar');
+            if (sidebar.style.display === 'none') return;
             sidebar.classList.remove('sidebar-open');
-            sidebar.style.display = 'none';
+            sidebar.classList.add('sidebar-closing');
+            document.body.classList.remove('sidebar-visible');
+            setTimeout(() => {
+                sidebar.style.display = 'none';
+                sidebar.classList.remove('sidebar-closing');
+            }, 220);
             document.getElementById('placeholder').style.display = 'block';
         }
 
@@ -467,6 +537,19 @@
                     maxZoom: 3
                 });
 
+                function applyThemeToGraph(theme) {
+                    const isLight = theme === 'light';
+                    const nodeTextColor = isLight ? '#0f172a' : '#f8fafc';
+                    const edgeColor = isLight ? '#94a3b8' : '#334155';
+                    cy.style()
+                        .selector('node')
+                        .style('color', nodeTextColor)
+                        .selector('edge')
+                        .style('line-color', edgeColor)
+                        .style('target-arrow-color', edgeColor)
+                        .update();
+                }
+
                 cy.on('tap', 'node', async function(evt) {
                     const node = evt.target;
                     const nd = node.data();
@@ -478,8 +561,10 @@
                     const sidebar = document.getElementById('sidebar');
                     sidebar.style.display = 'flex';
                     sidebar.classList.remove('sidebar-open');
+                    sidebar.classList.remove('sidebar-closing');
                     void sidebar.offsetWidth;
                     sidebar.classList.add('sidebar-open');
+                    document.body.classList.add('sidebar-visible');
 
                     // Logo
                     const logoEl = document.getElementById('sidebar-logo');
@@ -537,6 +622,11 @@
                     if (evt.target === cy) closeSidebar();
                 });
 
+                const activeTheme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
+                applyThemeToGraph(activeTheme);
+
+                window.applyThemeToGraph = applyThemeToGraph;
+
             } catch (error) {
                 console.error('Error loading data.json:', error);
                 document.getElementById('placeholder').innerText = 'Error loading map data.';
@@ -555,11 +645,13 @@
                 body.classList.add('light-mode');
                 themeToggle.textContent = '☀️ Light';
                 localStorage.setItem('theme', 'light');
+                if (window.applyThemeToGraph) window.applyThemeToGraph('light');
             } else {
                 body.classList.remove('light-mode');
                 body.classList.add('dark-mode');
                 themeToggle.textContent = '🌙 Dark';
                 localStorage.setItem('theme', 'dark');
+                if (window.applyThemeToGraph) window.applyThemeToGraph('dark');
             }
         }
 
@@ -572,9 +664,11 @@
             if (theme === 'light') {
                 body.classList.add('light-mode');
                 themeToggle.textContent = '☀️ Light';
+                if (window.applyThemeToGraph) window.applyThemeToGraph('light');
             } else {
                 body.classList.add('dark-mode');
                 themeToggle.textContent = '🌙 Dark';
+                if (window.applyThemeToGraph) window.applyThemeToGraph('dark');
             }
         });
     </script>
