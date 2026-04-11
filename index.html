@@ -562,6 +562,7 @@
         <button class="legend-item" data-group="gecko"><span class="legend-dot" style="background:#a78bfa"></span>Gecko-based</button>
         <button class="legend-item" data-group="goanna"><span class="legend-dot" style="background:#ec4899"></span>Goanna-based</button>
         <button class="legend-item" data-group="webkit"><span class="legend-dot" style="background:#34d399"></span>WebKit-based</button>
+        <button class="legend-item" data-group="konqueror"><span class="legend-dot" style="background:#eab308"></span>Konqueror / KHTML</button>
         <button class="legend-item" data-group="presto"><span class="legend-dot" style="background:#ef4444"></span>Presto-based</button>
         <button class="legend-item" data-group="mosaic"><span class="legend-dot" style="background:#d97706"></span>Mosaic lineage</button>
         <button class="legend-item" data-group="independent"><span class="legend-dot" style="background:#f59e0b"></span>Independent engine</button>
@@ -599,8 +600,8 @@
             goanna: '#ec4899', palemoon: '#ec4899', basilisk: '#ec4899',
             presto: '#ef4444', 'opera-presto': '#ef4444',
             netscape: '#d97706', mosaic: '#d97706',
-            webkit: '#34d399', safari: '#34d399', khtml: '#34d399', 'ios-wkwebview': '#34d399', 'macos-webview': '#34d399',
-            helium: '#38bdf8', konqueror: '#f59e0b',
+            webkit: '#34d399', safari: '#34d399', 'ios-wkwebview': '#34d399', 'macos-webview': '#34d399',
+            helium: '#38bdf8', konqueror: '#eab308', khtml: '#eab308',
             ladybird: '#f59e0b', netsurf: '#f59e0b', flow: '#f59e0b', dillo: '#f59e0b',
             ie: '#fb923c', trident: '#fb923c', edgehtml: '#fb923c', 'edge-legacy': '#fb923c', 'windows-webbrowser': '#fb923c', 'windows-webview2': '#38bdf8',
             'android-webview': '#38bdf8',
@@ -696,7 +697,8 @@
             if (['chromium', 'chrome', 'brave', 'edge', 'opera', 'vivaldi', 'thorium', 'yandex', 'comet', 'arc', 'kiwi', 'min', 'samsung', 'ungoogled', 'bromite', 'cromite', 'android-webview', 'blink', 'windows-webview2', 'helium'].includes(nodeId)) return 'blink';
             if (['goanna', 'palemoon', 'basilisk'].includes(nodeId)) return 'goanna';
             if (['firefox', 'tor', 'librewolf', 'mullvad', 'zen', 'floorp', 'iceweasel', 'icecat', 'waterfox', 'gecko'].includes(nodeId)) return 'gecko';
-            if (['webkit', 'safari', 'konqueror', 'khtml', 'ios-wkwebview', 'macos-webview'].includes(nodeId)) return 'webkit';
+            if (['konqueror', 'khtml'].includes(nodeId)) return 'konqueror';
+            if (['webkit', 'safari', 'ios-wkwebview', 'macos-webview'].includes(nodeId)) return 'webkit';
             if (['presto', 'opera-presto'].includes(nodeId)) return 'presto';
             if (['mosaic', 'netscape'].includes(nodeId)) return 'mosaic';
             if (['ie', 'trident', 'edgehtml', 'edge-legacy', 'windows-webbrowser'].includes(nodeId)) return 'legacy';
